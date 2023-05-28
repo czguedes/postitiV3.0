@@ -7,13 +7,14 @@ export const Login: React.FC = () => {
 	return (
 		<>
 			<Container>
-				<Grid container>
-					<Grid item xs={12} md={8}>
-						<Typography variant="h1" textAlign={'center'}>
-							Postiti
+				<Grid container alignItems={'center'} spacing={4}>
+					<Grid item xs={12} md={7} textAlign={'center'}>
+						<Typography variant="h1">Postiti</Typography>
+						<Typography variant="body1">
+							Anote. Organize.
 						</Typography>
 					</Grid>
-					<Grid item xs={12} md={4}>
+					<Grid item xs={12} md={5}>
 						<FormLogin />
 					</Grid>
 				</Grid>
