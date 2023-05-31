@@ -36,7 +36,7 @@ export const Home: React.FC = () => {
 				sx={{ position: 'fixed', bottom: '24px', right: '24px' }}
 				onClick={() => {
 					setOpen(true);
-					setContext('excluir');
+					setContext('adicionar');
 				}}
 			>
 				<AddIcon />

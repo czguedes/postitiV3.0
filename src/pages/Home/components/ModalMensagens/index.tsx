@@ -29,10 +29,14 @@ export const ModalMensagens: React.FC<ModalMensagensProps> = ({
 	return (
 		<Box component={'form'}>
 			<Dialog open={open} onClose={fechaModal}>
-				{context === 'adicionar' && (
-					<>
-						<DialogTitle>Adicionar Recado</DialogTitle>
-						<DialogContent>
+				<DialogTitle>
+					{context === 'adicionar' && 'Adicionar recado'}
+					{context === 'editar' && 'Editar recado'}
+					{context === 'excluir' && 'Excluir recado'}
+				</DialogTitle>
+				<DialogContent>
+					{context !== 'excluir' && (
+						<>
 							<TextField
 								autoFocus
 								margin="dense"
@@ -57,20 +61,21 @@ export const ModalMensagens: React.FC<ModalMensagensProps> = ({
 								onChange={(ev) => setRecado(ev.target.value)}
 								value={recado}
 							/>
-						</DialogContent>
-						<DialogActions>
-							<Button type="reset" onClick={fechaModal}>
-								Cancelar
-							</Button>
-							<Button type="submit" onClick={fechaModal}>
-								Adicionar
-							</Button>
-						</DialogActions>
-					</>
-				)}
+						</>
+					)}
+				</DialogContent>
+				<DialogActions>
+					<Button type="reset" onClick={fechaModal}>
+						Cancelar
+					</Button>
+					<Button type="submit" onClick={fechaModal}>
+						Adicionar
+					</Button>
+				</DialogActions>
+
 				{context === 'excluir' && (
 					<>
-						<DialogTitle>Excluir mensagem</DialogTitle>
+						<DialogTitle>Excluir Recado</DialogTitle>
 						<DialogContent>
 							<Typography variant="body1">
 								Você deseja mesmo excluir esse recado?

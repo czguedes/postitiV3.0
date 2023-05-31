@@ -34,7 +34,7 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 						label="Email"
 						type="email"
 						fullWidth
-						variant="standard"
+						variant="filled"
 						helperText={
 							'Insira um endereço de email válido (exemplo@email.com)'
 						}
@@ -49,7 +49,7 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 						label="Senha"
 						type="password"
 						fullWidth
-						variant="standard"
+						variant="filled"
 						helperText={
 							'Uma senha válida possui 6 ou mais caracteres.'
 						}
