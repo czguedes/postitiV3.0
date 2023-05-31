@@ -1,9 +1,11 @@
 import { combineReducers } from '@reduxjs/toolkit';
 
+import recadosSlice from './Recados/recadosSlice';
+import usuariosSlice from './Usuario/usuariosSlice';
+
 const rootReducer = combineReducers({
-	// a cada novo slice, adicionamos uma nova propriedade neste objeto
-	// propriedade - nome na store
-	// valor - reducer/manager deste estado global
+	usuario: usuariosSlice,
+	recados: recadosSlice,
 });
 
 export default rootReducer;

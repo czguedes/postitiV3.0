@@ -1,11 +1,17 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Box, Container, Fab, Grid } from '@mui/material';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { PostitiAppbar } from './components/AppBar';
 import { PostitiCards } from './components/Cards';
+import { ModalMensagens } from './components/ModalMensagens';
 
 export const Home: React.FC = () => {
+	const [open, setOpen] = useState(false);
+	const [context, setContext] = useState<'adicionar' | 'editar' | 'excluir'>(
+		'adicionar',
+	);
+
 	return (
 		<>
 			<Box
@@ -28,9 +34,14 @@ export const Home: React.FC = () => {
 				color="primary"
 				aria-label="add"
 				sx={{ position: 'fixed', bottom: '24px', right: '24px' }}
+				onClick={() => {
+					setOpen(true);
+					setContext('excluir');
+				}}
 			>
 				<AddIcon />
 			</Fab>
+			<ModalMensagens context={context} open={open} setOpen={setOpen} />
 		</>
 	);
 };
