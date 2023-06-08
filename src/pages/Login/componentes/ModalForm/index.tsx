@@ -9,6 +9,10 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
+import { useAppDispatch } from '../../../../store/hooks';
+import { adicionarUsuario } from '../../../../store/modules/Usuario/usuariosSlice';
+import { emailRegex } from '../../../../utils/validations/regexEmail';
+
 interface ModalFormProps {
 	open: boolean;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -18,16 +22,44 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 	const [email, setEmail] = useState('');
 	const [senha, setSenha] = useState('');
 
+	const dispatch = useAppDispatch();
+
+	const testeEmail = () => !emailRegex.test(email);
+
 	const fechaModal = () => {
 		setOpen(false);
+		setTimeout(() => {
+			setEmail('');
+			setSenha('');
+		}, 1000);
 	};
+
+	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
+		ev.preventDefault();
+		console.log('foi');
+
+		if (!ev.currentTarget.checkValidity()) {
+			return;
+		}
+
+		dispatch(
+			adicionarUsuario({
+				email: email,
+				senha: senha,
+			}),
+		);
+
+		fechaModal();
+	};
+
 	return (
-		<Box component={'form'}>
-			<Dialog open={open} onClose={fechaModal}>
+		<Dialog open={open} onClose={fechaModal}>
+			<Box component={'form'} onSubmit={handleSubmit}>
 				<DialogTitle>Criar Conta</DialogTitle>
 				<DialogContent>
 					<TextField
 						autoFocus
+						aria-required
 						margin="dense"
 						name="email"
 						id="email"
@@ -35,14 +67,13 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 						type="email"
 						fullWidth
 						variant="filled"
-						helperText={
-							'Insira um endereço de email válido (exemplo@email.com)'
-						}
-						onChange={(ev) => setEmail(ev.target.value)}
+						onChange={(ev) => setEmail(ev.currentTarget.value)}
 						value={email}
+						error={testeEmail() ?? true}
+						helperText={testeEmail() && 'Insira um email válido!'}
 					/>
 					<TextField
-						autoFocus
+						aria-required
 						margin="dense"
 						id="senha"
 						name="senha"
@@ -50,22 +81,22 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 						type="password"
 						fullWidth
 						variant="filled"
-						helperText={
-							'Uma senha válida possui 6 ou mais caracteres.'
-						}
-						onChange={(ev) => setSenha(ev.target.value)}
+						onChange={(ev) => setSenha(ev.currentTarget.value)}
 						value={senha}
+						error={senha.length < 8 ? true : false}
+						helperText={
+							senha.length < 8 &&
+							'Uma senha válida possui 8 ou mais caracteres!'
+						}
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button type="reset" onClick={fechaModal}>
+					<Button type="button" onClick={fechaModal}>
 						Cancelar
 					</Button>
-					<Button type="submit" onClick={fechaModal}>
-						Increver-se
-					</Button>
+					<Button type="submit">Criar conta</Button>
 				</DialogActions>
-			</Dialog>
-		</Box>
+			</Box>
+		</Dialog>
 	);
 };

@@ -10,33 +10,32 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-interface ModalMensagensProps {
-	context: 'adicionar' | 'editar' | 'excluir';
-	open: boolean;
-	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { escondeModal } from '../../../../store/modules/ContextoModal/contextoSlice';
 
-export const ModalMensagens: React.FC<ModalMensagensProps> = ({
-	open,
-	setOpen,
-	context,
-}) => {
+export const ModalMensagens: React.FC = () => {
+	const dispatch = useAppDispatch();
+	const select = useAppSelector((state) => state.contexto);
+	const context = select.contexto;
+
+	const fechaModal = () => {
+		dispatch(escondeModal());
+	};
+
 	const [titulo, setTitulo] = useState('');
 	const [recado, setRecado] = useState('');
-	const fechaModal = () => {
-		setOpen(false);
-	};
+
 	return (
-		<Box component={'form'}>
-			<Dialog open={open} onClose={fechaModal}>
+		<Dialog open={select.isOpen} onClose={fechaModal}>
+			<Box component={'form'}>
 				<DialogTitle>
 					{context === 'adicionar' && 'Adicionar recado'}
 					{context === 'editar' && 'Editar recado'}
 					{context === 'excluir' && 'Excluir recado'}
 				</DialogTitle>
-				<DialogContent>
-					{context !== 'excluir' && (
-						<>
+				{context !== 'excluir' && (
+					<>
+						<DialogContent>
 							<TextField
 								autoFocus
 								margin="dense"
@@ -60,22 +59,31 @@ export const ModalMensagens: React.FC<ModalMensagensProps> = ({
 								variant="filled"
 								onChange={(ev) => setRecado(ev.target.value)}
 								value={recado}
+								multiline
+								minRows={3}
 							/>
-						</>
-					)}
-				</DialogContent>
-				<DialogActions>
-					<Button type="reset" onClick={fechaModal}>
-						Cancelar
-					</Button>
-					<Button type="submit" onClick={fechaModal}>
-						Adicionar
-					</Button>
-				</DialogActions>
+						</DialogContent>
+						<DialogActions>
+							<Button
+								type="button"
+								onClick={fechaModal}
+								variant="outlined"
+							>
+								Cancelar
+							</Button>
+							<Button
+								type="submit"
+								color="success"
+								variant="contained"
+							>
+								Adicionar
+							</Button>
+						</DialogActions>
+					</>
+				)}
 
 				{context === 'excluir' && (
 					<>
-						<DialogTitle>Excluir Recado</DialogTitle>
 						<DialogContent>
 							<Typography variant="body1">
 								Você deseja mesmo excluir esse recado?
@@ -84,7 +92,7 @@ export const ModalMensagens: React.FC<ModalMensagensProps> = ({
 
 						<DialogActions>
 							<Button
-								type="reset"
+								type="button"
 								onClick={fechaModal}
 								variant="outlined"
 							>
@@ -92,7 +100,6 @@ export const ModalMensagens: React.FC<ModalMensagensProps> = ({
 							</Button>
 							<Button
 								type="button"
-								onClick={fechaModal}
 								color="error"
 								variant="contained"
 							>
@@ -101,7 +108,7 @@ export const ModalMensagens: React.FC<ModalMensagensProps> = ({
 						</DialogActions>
 					</>
 				)}
-			</Dialog>
-		</Box>
+			</Box>
+		</Dialog>
 	);
 };

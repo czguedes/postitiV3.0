@@ -8,7 +8,7 @@ const initialState: ContextoState = {
 };
 
 export const contextoSlice = createSlice({
-    name: 'contexto',
+    name: 'contextoModal',
     initialState,
     reducers: {
         mostraModal: (

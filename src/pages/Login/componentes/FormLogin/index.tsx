@@ -18,6 +18,7 @@ export const FormLogin: React.FC = () => {
 					<Grid item>
 						<TextField
 							autoFocus
+							aria-required
 							type="email"
 							fullWidth
 							variant="filled"
@@ -31,6 +32,7 @@ export const FormLogin: React.FC = () => {
 					</Grid>
 					<Grid item>
 						<TextField
+							aria-required
 							type="password"
 							fullWidth
 							variant="filled"
