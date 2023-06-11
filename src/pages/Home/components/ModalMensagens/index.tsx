@@ -9,25 +9,58 @@ import {
 	Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
+import { v4 as geraID } from 'uuid';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { escondeModal } from '../../../../store/modules/ContextoModal/contextoSlice';
+import { adicionarRecado } from '../../../../store/modules/Recados/recadosSlice';
 
 export const ModalMensagens: React.FC = () => {
+	const [titulo, setTitulo] = useState('');
+	const [recado, setRecado] = useState('');
+
 	const dispatch = useAppDispatch();
 	const select = useAppSelector((state) => state.contexto);
 	const context = select.contexto;
 
 	const fechaModal = () => {
 		dispatch(escondeModal());
+		setTimeout(() => {
+			setTitulo('');
+			setRecado('');
+		}, 1000);
 	};
 
-	const [titulo, setTitulo] = useState('');
-	const [recado, setRecado] = useState('');
+	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
+		ev.preventDefault();
+
+		switch (context) {
+			case 'adicionar':
+				dispatch(
+					adicionarRecado({
+						id: String(geraID()),
+						titulo: titulo,
+						mensagem: recado,
+						criadoEm: new Date().toLocaleString('pt-Br', {
+							dateStyle: 'short',
+						}),
+						criadoPor: 'fulano',
+					}),
+				);
+				fechaModal();
+				break;
+			case 'editar':
+				//lógica para editar
+
+				break;
+			case 'excluir':
+				break;
+		}
+	};
 
 	return (
 		<Dialog open={select.isOpen} onClose={fechaModal}>
-			<Box component={'form'}>
+			<Box component={'form'} onSubmit={handleSubmit}>
 				<DialogTitle>
 					{context === 'adicionar' && 'Adicionar recado'}
 					{context === 'editar' && 'Editar recado'}
@@ -76,7 +109,7 @@ export const ModalMensagens: React.FC = () => {
 								color="success"
 								variant="contained"
 							>
-								Adicionar
+								Salvar
 							</Button>
 						</DialogActions>
 					</>
@@ -99,7 +132,7 @@ export const ModalMensagens: React.FC = () => {
 								Cancelar
 							</Button>
 							<Button
-								type="button"
+								type="submit"
 								color="error"
 								variant="contained"
 							>

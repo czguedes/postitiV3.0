@@ -1,6 +1,7 @@
 import { Container, Grid, Typography } from '@mui/material';
 import React from 'react';
 
+import { SnackBarComp } from '../../utils/shared/Snackbar';
 import { FormLogin } from './componentes/FormLogin';
 
 export const Login: React.FC = () => {
@@ -18,6 +19,7 @@ export const Login: React.FC = () => {
 						<FormLogin />
 					</Grid>
 				</Grid>
+				<SnackBarComp />
 			</Container>
 		</>
 	);

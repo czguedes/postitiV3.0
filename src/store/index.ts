@@ -5,7 +5,7 @@ import localStorage from 'redux-persist/lib/storage'; // defaults to localStorag
 import rootReducer from './modules/rootReducer';
 
 const persistedReducer = persistReducer(
-	{ key: 'dataApp', storage: localStorage },
+	{ key: 'root', storage: localStorage },
 	rootReducer,
 );
 

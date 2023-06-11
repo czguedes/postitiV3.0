@@ -2,18 +2,53 @@ import { Box, Button, Grid, Link, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { showNotification } from '../../../../store/modules/notificationSlice';
+import { buscarUsuarios } from '../../../../store/modules/Usuario/usuariosSlice';
 import { ModalForm } from '../ModalForm';
 
 export const FormLogin: React.FC = () => {
 	const [open, setOpen] = useState(false);
-	const [email, setEmail] = useState('');
-	const [senha, setSenha] = useState('');
+	const [isError, setIsError] = useState(false);
 
 	const navigate = useNavigate();
+	const buscaUsuario = useAppSelector(buscarUsuarios);
+	const dispatch = useAppDispatch();
+
+	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
+		ev.preventDefault();
+		const loginEmail = ev.currentTarget.email.value;
+		const loginSenha = ev.currentTarget.senha.value;
+
+		if (!ev.currentTarget.checkValidity()) {
+			return;
+		}
+
+		const confirmaDados = buscaUsuario.some((item) => {
+			if (item.email === loginEmail && item.senha === loginSenha) {
+				item.isLogged = true;
+				return true;
+			}
+			return false;
+		});
+
+		if (!confirmaDados) {
+			setIsError(true);
+			dispatch(
+				showNotification({
+					message: 'Email ou senha inválidos!',
+					success: false,
+				}),
+			);
+			return;
+		}
+
+		navigate('/postiti');
+	};
 
 	return (
 		<>
-			<Box component={'form'}>
+			<Box component={'form'} onSubmit={handleSubmit}>
 				<Grid container flexDirection={'column'} gap={2}>
 					<Grid item>
 						<TextField
@@ -25,9 +60,8 @@ export const FormLogin: React.FC = () => {
 							label={'Email'}
 							id="email"
 							name="email"
-							helperText={'Insira seu email cadastrado'}
-							onChange={(ev) => setEmail(ev.target.value)}
-							value={email}
+							error={isError}
+							helperText="Insira um email cadastrado"
 						/>
 					</Grid>
 					<Grid item>
@@ -39,9 +73,8 @@ export const FormLogin: React.FC = () => {
 							id="senha"
 							name="senha"
 							label={'Senha'}
+							error={isError}
 							helperText={'Insira sua senha'}
-							onChange={(ev) => setSenha(ev.target.value)}
-							value={senha}
 						/>
 					</Grid>
 					<Grid item>
@@ -51,7 +84,6 @@ export const FormLogin: React.FC = () => {
 									type="submit"
 									fullWidth
 									variant="contained"
-									onClick={() => navigate('/postiti')}
 								>
 									Entrar
 								</Button>

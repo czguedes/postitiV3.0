@@ -15,16 +15,26 @@ import { useAppDispatch } from '../../../../store/hooks';
 import { mostraModal } from '../../../../store/modules/ContextoModal/contextoSlice';
 import { ModalMensagens } from '../ModalMensagens';
 
-export const PostitiCards: React.FC = () => {
+interface PostitiCardsProps {
+	titulo: string;
+	recado: string;
+	data: string;
+}
+
+export const PostitiCards: React.FC<PostitiCardsProps> = ({
+	data,
+	recado,
+	titulo,
+}) => {
 	const dispatch = useAppDispatch();
 
 	const showModal = (tipo: string) => {
 		switch (tipo) {
 			case 'editar':
-				dispatch(mostraModal('editar')).payload;
+				dispatch(mostraModal('editar'));
 				break;
 			case 'excluir':
-				dispatch(mostraModal('excluir')).payload;
+				dispatch(mostraModal('excluir'));
 				break;
 		}
 		return <ModalMensagens />;
@@ -34,13 +44,10 @@ export const PostitiCards: React.FC = () => {
 		<>
 			<Grid item xs={12} md={6} lg={4}>
 				<Card variant="outlined">
-					<CardHeader title={'Título'} subheader={'xx/xx/xxxx'} />
+					<CardHeader title={titulo} subheader={data} />
 
 					<CardContent>
-						<Typography>
-							Lorem ipsum dolor sit, amet consectetur adipisicing
-							elit. Officia, voluptates!
-						</Typography>
+						<Typography>{recado}</Typography>
 					</CardContent>
 					<CardActions>
 						<IconButton onClick={() => showModal('editar')}>

@@ -9,7 +9,8 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-import { useAppDispatch } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { showNotification } from '../../../../store/modules/notificationSlice';
 import { adicionarUsuario } from '../../../../store/modules/Usuario/usuariosSlice';
 import { emailRegex } from '../../../../utils/validations/regexEmail';
 
@@ -23,8 +24,8 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 	const [senha, setSenha] = useState('');
 
 	const dispatch = useAppDispatch();
-
-	const testeEmail = () => !emailRegex.test(email);
+	const select = useAppSelector((state) => state.usuario);
+	const testeEmail = () => emailRegex.test(email);
 
 	const fechaModal = () => {
 		setOpen(false);
@@ -36,9 +37,40 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 
 	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
-		console.log('foi');
+
+		const buscaEmail = select.ids.some((id) => id === email);
 
 		if (!ev.currentTarget.checkValidity()) {
+			return;
+		}
+
+		if (buscaEmail) {
+			dispatch(
+				showNotification({
+					message: 'Email já foi cadastrado!',
+					success: false,
+				}),
+			);
+			return;
+		}
+
+		if (!testeEmail()) {
+			dispatch(
+				showNotification({
+					message: 'Email inválido!',
+					success: false,
+				}),
+			);
+			return;
+		}
+
+		if (senha.length < 8) {
+			dispatch(
+				showNotification({
+					message: 'Sua senha deve possuir 8 ou mais caracteres!',
+					success: false,
+				}),
+			);
 			return;
 		}
 
@@ -50,6 +82,13 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 		);
 
 		fechaModal();
+
+		dispatch(
+			showNotification({
+				message: 'Conta criada com sucesso!',
+				success: true,
+			}),
+		);
 	};
 
 	return (
@@ -69,8 +108,10 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 						variant="filled"
 						onChange={(ev) => setEmail(ev.currentTarget.value)}
 						value={email}
-						error={testeEmail() ?? true}
-						helperText={testeEmail() && 'Insira um email válido!'}
+						error={!testeEmail()}
+						helperText={
+							!testeEmail() ? 'Insira um email válido!' : ''
+						}
 					/>
 					<TextField
 						aria-required
@@ -85,8 +126,7 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 						value={senha}
 						error={senha.length < 8 ? true : false}
 						helperText={
-							senha.length < 8 &&
-							'Uma senha válida possui 8 ou mais caracteres!'
+							senha.length < 8 && 'Insira uma senha válida!'
 						}
 					/>
 				</DialogContent>
