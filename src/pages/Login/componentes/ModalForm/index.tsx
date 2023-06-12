@@ -78,6 +78,7 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 			adicionarUsuario({
 				email: email,
 				senha: senha,
+				isLogged: false,
 			}),
 		);
 

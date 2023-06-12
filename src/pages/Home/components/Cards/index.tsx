@@ -50,7 +50,12 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 						<Typography>{recado}</Typography>
 					</CardContent>
 					<CardActions>
-						<IconButton onClick={() => showModal('editar')}>
+						<IconButton
+							onClick={(ev) => {
+								showModal('editar');
+								console.log(ev.currentTarget);
+							}}
+						>
 							<EditNoteIcon />
 						</IconButton>
 						<IconButton onClick={() => showModal('excluir')}>

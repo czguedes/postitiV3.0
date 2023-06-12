@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { showNotification } from '../../../../store/modules/notificationSlice';
-import { buscarUsuarios } from '../../../../store/modules/Usuario/usuariosSlice';
+import {
+	buscarUsuarios,
+	logaUsuario,
+} from '../../../../store/modules/Usuario/usuariosSlice';
 import { ModalForm } from '../ModalForm';
 
 export const FormLogin: React.FC = () => {
@@ -24,13 +27,9 @@ export const FormLogin: React.FC = () => {
 			return;
 		}
 
-		const confirmaDados = buscaUsuario.some((item) => {
-			if (item.email === loginEmail && item.senha === loginSenha) {
-				item.isLogged = true;
-				return true;
-			}
-			return false;
-		});
+		const confirmaDados = buscaUsuario.some(
+			(item) => item.email === loginEmail && item.senha === loginSenha,
+		);
 
 		if (!confirmaDados) {
 			setIsError(true);
@@ -42,6 +41,13 @@ export const FormLogin: React.FC = () => {
 			);
 			return;
 		}
+
+		dispatch(
+			logaUsuario({
+				id: loginEmail,
+				changes: { isLogged: true },
+			}),
+		);
 
 		navigate('/postiti');
 	};

@@ -9,11 +9,9 @@ import {
 	Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { v4 as geraID } from 'uuid';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { escondeModal } from '../../../../store/modules/ContextoModal/contextoSlice';
-import { adicionarRecado } from '../../../../store/modules/Recados/recadosSlice';
 
 export const ModalMensagens: React.FC = () => {
 	const [titulo, setTitulo] = useState('');
@@ -22,6 +20,8 @@ export const ModalMensagens: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const select = useAppSelector((state) => state.contexto);
 	const context = select.contexto;
+
+	const selector = useAppSelector;
 
 	const fechaModal = () => {
 		dispatch(escondeModal());
@@ -34,28 +34,29 @@ export const ModalMensagens: React.FC = () => {
 	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		switch (context) {
-			case 'adicionar':
-				dispatch(
-					adicionarRecado({
-						id: String(geraID()),
-						titulo: titulo,
-						mensagem: recado,
-						criadoEm: new Date().toLocaleString('pt-Br', {
-							dateStyle: 'short',
-						}),
-						criadoPor: 'fulano',
-					}),
-				);
-				fechaModal();
-				break;
-			case 'editar':
-				//lógica para editar
+		// switch (context) {
+		// 	case 'adicionar':
+		// 		dispatch(
+		// 			adicionarRecado({
+		// 				id: String(geraID()),
+		// 				titulo: titulo,
+		// 				mensagem: recado,
+		// 				criadoEm: new Date().toLocaleString('pt-Br', {
+		// 					dateStyle: 'short',
+		// 				}),
+		// 				criadoPor: 'fulano',
+		// 			}),
+		// 		);
+		// 		fechaModal();
+		// 		break;
+		// 	case 'editar':
+		// 		//lógica para editar
 
-				break;
-			case 'excluir':
-				break;
-		}
+		// 		break;
+		// 	case 'excluir':
+		// 		//lógica de exclusão
+		// 		break;
+		// }
 	};
 
 	return (

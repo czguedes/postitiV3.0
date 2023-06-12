@@ -5,7 +5,6 @@ import React from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { mostraModal } from '../../store/modules/ContextoModal/contextoSlice';
 import { listaTodosRecados } from '../../store/modules/Recados/recadosSlice';
-import { buscarUsuarios } from '../../store/modules/Usuario/usuariosSlice';
 import { SnackBarComp } from '../../utils/shared/Snackbar';
 import { PostitiAppbar } from './components/AppBar';
 import { PostitiCards } from './components/Cards';
@@ -13,10 +12,6 @@ import { PostitiCards } from './components/Cards';
 export const Home: React.FC = () => {
 	const dispatch = useAppDispatch();
 	const selectRecados = useAppSelector(listaTodosRecados);
-
-	const userLogged = useAppSelector(buscarUsuarios).find(
-		(item) => item.isLogged === true,
-	);
 
 	return (
 		<>

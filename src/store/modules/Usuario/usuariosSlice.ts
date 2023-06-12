@@ -16,9 +16,10 @@ export const usuariosSlice = createSlice({
 	initialState: usersAdapter.getInitialState(),
 	reducers: {
 		adicionarUsuario: usersAdapter.addOne,
+		logaUsuario: usersAdapter.updateOne,
 	},
 });
 
-export const { adicionarUsuario } = usuariosSlice.actions;
+export const { adicionarUsuario, logaUsuario } = usuariosSlice.actions;
 
 export default usuariosSlice.reducer;
