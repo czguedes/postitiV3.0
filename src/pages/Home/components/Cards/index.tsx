@@ -19,12 +19,14 @@ interface PostitiCardsProps {
 	titulo: string;
 	recado: string;
 	data: string;
+	id: string;
 }
 
 export const PostitiCards: React.FC<PostitiCardsProps> = ({
 	data,
 	recado,
 	titulo,
+	id,
 }) => {
 	const dispatch = useAppDispatch();
 
@@ -43,19 +45,14 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 	return (
 		<>
 			<Grid item xs={12} md={6} lg={4}>
-				<Card variant="outlined">
+				<Card variant="outlined" id={id}>
 					<CardHeader title={titulo} subheader={data} />
 
 					<CardContent>
 						<Typography>{recado}</Typography>
 					</CardContent>
 					<CardActions>
-						<IconButton
-							onClick={(ev) => {
-								showModal('editar');
-								console.log(ev.currentTarget);
-							}}
-						>
+						<IconButton onClick={() => showModal('editar')}>
 							<EditNoteIcon />
 						</IconButton>
 						<IconButton onClick={() => showModal('excluir')}>
@@ -64,7 +61,6 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 					</CardActions>
 				</Card>
 			</Grid>
-			<ModalMensagens />
 		</>
 	);
 };

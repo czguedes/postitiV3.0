@@ -9,9 +9,12 @@ import {
 	Typography,
 } from '@mui/material';
 import React, { useState } from 'react';
+import { v4 as geraID } from 'uuid';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { escondeModal } from '../../../../store/modules/ContextoModal/contextoSlice';
+import { adicionarRecado } from '../../../../store/modules/Recados/recadosSlice';
+import { buscarUsuarios } from '../../../../store/modules/Usuario/usuariosSlice';
 
 export const ModalMensagens: React.FC = () => {
 	const [titulo, setTitulo] = useState('');
@@ -21,7 +24,9 @@ export const ModalMensagens: React.FC = () => {
 	const select = useAppSelector((state) => state.contexto);
 	const context = select.contexto;
 
-	const selector = useAppSelector;
+	const userLogged = useAppSelector(buscarUsuarios).find(
+		(item) => item.isLogged === true,
+	);
 
 	const fechaModal = () => {
 		dispatch(escondeModal());
@@ -34,29 +39,30 @@ export const ModalMensagens: React.FC = () => {
 	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		// switch (context) {
-		// 	case 'adicionar':
-		// 		dispatch(
-		// 			adicionarRecado({
-		// 				id: String(geraID()),
-		// 				titulo: titulo,
-		// 				mensagem: recado,
-		// 				criadoEm: new Date().toLocaleString('pt-Br', {
-		// 					dateStyle: 'short',
-		// 				}),
-		// 				criadoPor: 'fulano',
-		// 			}),
-		// 		);
-		// 		fechaModal();
-		// 		break;
-		// 	case 'editar':
-		// 		//lógica para editar
+		switch (context) {
+			case 'adicionar':
+				dispatch(
+					adicionarRecado({
+						id: String(geraID()),
+						titulo: titulo,
+						mensagem: recado,
+						criadoEm: new Date().toLocaleString('pt-Br', {
+							dateStyle: 'short',
+						}),
+						criadoPor: userLogged?.email ?? '',
+					}),
+				);
+				fechaModal();
+				break;
+			case 'editar':
+				//lógica para editar
 
-		// 		break;
-		// 	case 'excluir':
-		// 		//lógica de exclusão
-		// 		break;
-		// }
+				break;
+			case 'excluir':
+				//lógica de exclusão
+
+				break;
+		}
 	};
 
 	return (

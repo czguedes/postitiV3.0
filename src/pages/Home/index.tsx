@@ -8,6 +8,7 @@ import { listaTodosRecados } from '../../store/modules/Recados/recadosSlice';
 import { SnackBarComp } from '../../utils/shared/Snackbar';
 import { PostitiAppbar } from './components/AppBar';
 import { PostitiCards } from './components/Cards';
+import { ModalMensagens } from './components/ModalMensagens';
 
 export const Home: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -25,12 +26,13 @@ export const Home: React.FC = () => {
 				<Container sx={{ marginY: 4 }}>
 					<Grid container spacing={2}>
 						{selectRecados.map(
-							({ criadoEm, mensagem, titulo, id }) => (
+							({ criadoEm, mensagem, titulo, id, criadoPor }) => (
 								<PostitiCards
 									data={criadoEm}
 									recado={mensagem}
 									titulo={titulo}
-									key={id}
+									key={criadoPor}
+									id={id}
 								/>
 							),
 						)}
@@ -48,6 +50,7 @@ export const Home: React.FC = () => {
 				<AddIcon />
 			</Fab>
 			<SnackBarComp />
+			<ModalMensagens />
 		</>
 	);
 };
