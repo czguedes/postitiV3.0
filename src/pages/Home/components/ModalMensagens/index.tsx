@@ -8,12 +8,17 @@ import {
 	TextField,
 	Typography,
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { v4 as geraID } from 'uuid';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { escondeModal } from '../../../../store/modules/ContextoModal/contextoSlice';
-import { adicionarRecado } from '../../../../store/modules/Recados/recadosSlice';
+import { apagaId } from '../../../../store/modules/ModalMensagens';
+import {
+	adicionarRecado,
+	editarRecado,
+	removerRecado,
+} from '../../../../store/modules/Recados/recadosSlice';
 import { buscarUsuarios } from '../../../../store/modules/Usuario/usuariosSlice';
 
 export const ModalMensagens: React.FC = () => {
@@ -21,8 +26,22 @@ export const ModalMensagens: React.FC = () => {
 	const [recado, setRecado] = useState('');
 
 	const dispatch = useAppDispatch();
-	const select = useAppSelector((state) => state.contexto);
-	const context = select.contexto;
+	const { contexto, isOpen } = useAppSelector((state) => state.contexto);
+
+	const recadoSelecionado = useAppSelector((state) => state.idRecado);
+
+	useEffect(() => {
+		if (isOpen) {
+			if (
+				contexto === 'editar' &&
+				recadoSelecionado.tituloRecado &&
+				recadoSelecionado.recado
+			) {
+				setTitulo(recadoSelecionado.tituloRecado);
+				setRecado(recadoSelecionado.recado);
+			}
+		}
+	}, [recadoSelecionado, contexto, isOpen]);
 
 	const userLogged = useAppSelector(buscarUsuarios).find(
 		(item) => item.isLogged === true,
@@ -30,16 +49,12 @@ export const ModalMensagens: React.FC = () => {
 
 	const fechaModal = () => {
 		dispatch(escondeModal());
-		setTimeout(() => {
-			setTitulo('');
-			setRecado('');
-		}, 1000);
 	};
 
 	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		switch (context) {
+		switch (contexto) {
 			case 'adicionar':
 				dispatch(
 					adicionarRecado({
@@ -56,24 +71,43 @@ export const ModalMensagens: React.FC = () => {
 				break;
 			case 'editar':
 				//lógica para editar
+				if (recadoSelecionado.idRecado) {
+					dispatch(
+						editarRecado({
+							id: recadoSelecionado.idRecado,
+							changes: {
+								titulo: titulo,
+								mensagem: recado,
+							},
+						}),
+					);
+				}
+				setRecado('');
+				setTitulo('');
+				dispatch(apagaId());
+				fechaModal();
 
 				break;
 			case 'excluir':
 				//lógica de exclusão
-
+				if (recadoSelecionado.idRecado) {
+					dispatch(removerRecado(recadoSelecionado.idRecado));
+				}
+				dispatch(apagaId());
+				fechaModal();
 				break;
 		}
 	};
 
 	return (
-		<Dialog open={select.isOpen} onClose={fechaModal}>
+		<Dialog open={isOpen} onClose={fechaModal}>
 			<Box component={'form'} onSubmit={handleSubmit}>
 				<DialogTitle>
-					{context === 'adicionar' && 'Adicionar recado'}
-					{context === 'editar' && 'Editar recado'}
-					{context === 'excluir' && 'Excluir recado'}
+					{contexto === 'adicionar' && 'Adicionar recado'}
+					{contexto === 'editar' && 'Editar recado'}
+					{contexto === 'excluir' && 'Excluir recado'}
 				</DialogTitle>
-				{context !== 'excluir' && (
+				{contexto !== 'excluir' && (
 					<>
 						<DialogContent>
 							<TextField
@@ -122,7 +156,7 @@ export const ModalMensagens: React.FC = () => {
 					</>
 				)}
 
-				{context === 'excluir' && (
+				{contexto === 'excluir' && (
 					<>
 						<DialogContent>
 							<Typography variant="body1">

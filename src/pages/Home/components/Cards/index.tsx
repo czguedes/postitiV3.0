@@ -13,7 +13,7 @@ import React from 'react';
 
 import { useAppDispatch } from '../../../../store/hooks';
 import { mostraModal } from '../../../../store/modules/ContextoModal/contextoSlice';
-import { ModalMensagens } from '../ModalMensagens';
+import { capturaId } from '../../../../store/modules/ModalMensagens';
 
 interface PostitiCardsProps {
 	titulo: string;
@@ -34,12 +34,25 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 		switch (tipo) {
 			case 'editar':
 				dispatch(mostraModal('editar'));
+				dispatch(
+					capturaId({
+						idRecado: id,
+						recado: recado,
+						tituloRecado: titulo,
+					}),
+				);
 				break;
 			case 'excluir':
 				dispatch(mostraModal('excluir'));
+				dispatch(
+					capturaId({
+						idRecado: id,
+						recado: recado,
+						tituloRecado: titulo,
+					}),
+				);
 				break;
 		}
-		return <ModalMensagens />;
 	};
 
 	return (
