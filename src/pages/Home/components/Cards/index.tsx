@@ -1,3 +1,5 @@
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import {
@@ -20,6 +22,7 @@ interface PostitiCardsProps {
 	recado: string;
 	data: string;
 	id: string;
+	arquivado: boolean;
 }
 
 export const PostitiCards: React.FC<PostitiCardsProps> = ({
@@ -27,6 +30,7 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 	recado,
 	titulo,
 	id,
+	arquivado,
 }) => {
 	const dispatch = useAppDispatch();
 
@@ -52,6 +56,8 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 					}),
 				);
 				break;
+			case 'arquivar':
+			//lógica p mudar estado do recado
 		}
 	};
 
@@ -70,6 +76,13 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 						</IconButton>
 						<IconButton onClick={() => showModal('excluir')}>
 							<DeleteIcon />
+						</IconButton>
+						<IconButton onClick={() => showModal('arquivar')}>
+							{arquivado ? (
+								<BookmarkIcon />
+							) : (
+								<BookmarkBorderIcon />
+							)}
 						</IconButton>
 					</CardActions>
 				</Card>

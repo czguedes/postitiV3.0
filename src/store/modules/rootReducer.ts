@@ -4,7 +4,7 @@ import contextoSlice from './ContextoModal/contextoSlice';
 import ModalMensagens from './ModalMensagens';
 import notificationSlice from './notificationSlice';
 import recadosSlice from './Recados/recadosSlice';
-import usuariosSlice from './Usuario/usuariosSlice';
+import usuariosSlice from './Usuario/usuarioSlice';
 
 const rootReducer = combineReducers({
 	usuario: usuariosSlice,

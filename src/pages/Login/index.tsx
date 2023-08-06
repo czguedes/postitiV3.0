@@ -1,10 +1,14 @@
 import { Container, Grid, Typography } from '@mui/material';
 import React from 'react';
 
+import { useAppSelector } from '../../store/hooks';
+import { Loading } from '../../utils/shared/Loading';
 import { SnackBarComp } from '../../utils/shared/Snackbar';
 import { FormLogin } from './componentes/FormLogin';
 
 export const Login: React.FC = () => {
+	const loading = useAppSelector((state) => state.usuario.loading);
+
 	return (
 		<>
 			<Container>
@@ -20,6 +24,7 @@ export const Login: React.FC = () => {
 					</Grid>
 				</Grid>
 				<SnackBarComp />
+				<Loading open={loading} />
 			</Container>
 		</>
 	);

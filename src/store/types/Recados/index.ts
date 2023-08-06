@@ -1,9 +1,14 @@
-interface RecadoState {
+export interface RecadoState {
 	id: string;
 	titulo: string;
-	mensagem: string;
+	recado: string;
 	criadoEm: string;
 	criadoPor: string;
+	arquivado: boolean;
 }
 
-export default RecadoState;
+export type RecadoDTO = {
+	titulo: string;
+	recado: string;
+	criadoPor: string;
+};

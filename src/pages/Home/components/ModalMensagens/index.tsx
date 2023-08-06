@@ -9,17 +9,11 @@ import {
 	Typography,
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { v4 as geraID } from 'uuid';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { escondeModal } from '../../../../store/modules/ContextoModal/contextoSlice';
 import { apagaId } from '../../../../store/modules/ModalMensagens';
-import {
-	adicionarRecado,
-	editarRecado,
-	removerRecado,
-} from '../../../../store/modules/Recados/recadosSlice';
-import { buscarUsuarios } from '../../../../store/modules/Usuario/usuariosSlice';
+import { criarRecado } from '../../../../store/modules/Recados/recadosSlice';
 
 export const ModalMensagens: React.FC = () => {
 	const [titulo, setTitulo] = useState('');
@@ -27,6 +21,7 @@ export const ModalMensagens: React.FC = () => {
 
 	const dispatch = useAppDispatch();
 	const { contexto, isOpen } = useAppSelector((state) => state.contexto);
+	const usuarioLogado = useAppSelector((s) => s.usuario);
 
 	const recadoSelecionado = useAppSelector((state) => state.idRecado);
 
@@ -43,10 +38,6 @@ export const ModalMensagens: React.FC = () => {
 		}
 	}, [recadoSelecionado, contexto, isOpen]);
 
-	const userLogged = useAppSelector(buscarUsuarios).find(
-		(item) => item.isLogged === true,
-	);
-
 	const fechaModal = () => {
 		dispatch(escondeModal());
 	};
@@ -57,14 +48,10 @@ export const ModalMensagens: React.FC = () => {
 		switch (contexto) {
 			case 'adicionar':
 				dispatch(
-					adicionarRecado({
-						id: String(geraID()),
+					criarRecado({
 						titulo: titulo,
-						mensagem: recado,
-						criadoEm: new Date().toLocaleString('pt-Br', {
-							dateStyle: 'short',
-						}),
-						criadoPor: userLogged?.email ?? '',
+						recado: recado,
+						criadoPor: usuarioLogado.usuario.id,
 					}),
 				);
 				fechaModal();
@@ -72,15 +59,7 @@ export const ModalMensagens: React.FC = () => {
 			case 'editar':
 				//lógica para editar
 				if (recadoSelecionado.idRecado) {
-					dispatch(
-						editarRecado({
-							id: recadoSelecionado.idRecado,
-							changes: {
-								titulo: titulo,
-								mensagem: recado,
-							},
-						}),
-					);
+					dispatch();
 				}
 				setRecado('');
 				setTitulo('');
@@ -91,7 +70,7 @@ export const ModalMensagens: React.FC = () => {
 			case 'excluir':
 				//lógica de exclusão
 				if (recadoSelecionado.idRecado) {
-					dispatch(removerRecado(recadoSelecionado.idRecado));
+					dispatch();
 				}
 				dispatch(apagaId());
 				fechaModal();
@@ -100,7 +79,7 @@ export const ModalMensagens: React.FC = () => {
 	};
 
 	return (
-		<Dialog open={isOpen} onClose={fechaModal}>
+		<Dialog open={isOpen}>
 			<Box component={'form'} onSubmit={handleSubmit}>
 				<DialogTitle>
 					{contexto === 'adicionar' && 'Adicionar recado'}
@@ -140,8 +119,8 @@ export const ModalMensagens: React.FC = () => {
 						<DialogActions>
 							<Button
 								type="button"
-								onClick={fechaModal}
 								variant="outlined"
+								onClick={fechaModal}
 							>
 								Cancelar
 							</Button>
@@ -167,8 +146,8 @@ export const ModalMensagens: React.FC = () => {
 						<DialogActions>
 							<Button
 								type="button"
-								onClick={fechaModal}
 								variant="outlined"
+								onClick={fechaModal}
 							>
 								Cancelar
 							</Button>

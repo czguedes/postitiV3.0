@@ -1,55 +1,49 @@
 import { Box, Button, Grid, Link, TextField, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { showNotification } from '../../../../store/modules/notificationSlice';
-import {
-	buscarUsuarios,
-	logaUsuario,
-} from '../../../../store/modules/Usuario/usuariosSlice';
+import { loginUsuario } from '../../../../store/modules/Usuario/usuarioSlice';
 import { ModalForm } from '../ModalForm';
 
 export const FormLogin: React.FC = () => {
 	const [open, setOpen] = useState(false);
 	const [isError, setIsError] = useState(false);
+	const [email, setEmail] = useState('');
+	const [senha, setSenha] = useState('');
 
-	const navigate = useNavigate();
-	const buscaUsuario = useAppSelector(buscarUsuarios);
 	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
+
+	const usuarioState = useAppSelector((state) => state.usuario);
+
+	useEffect(() => {
+		if (usuarioState.usuario.isLogged) {
+			navigate('/postiti');
+		}
+	}, [navigate, usuarioState]);
 
 	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
-		const loginEmail = ev.currentTarget.email.value;
-		const loginSenha = ev.currentTarget.senha.value;
 
-		if (!ev.currentTarget.checkValidity()) {
-			return;
-		}
+		const login = {
+			email,
+			senha,
+		};
 
-		const confirmaDados = buscaUsuario.some(
-			(item) => item.email === loginEmail && item.senha === loginSenha,
-		);
-
-		if (!confirmaDados) {
+		if (!email || !senha) {
 			setIsError(true);
 			dispatch(
 				showNotification({
-					message: 'Email ou senha inválidos!',
+					message: 'Necessário um email e uma senha válidos.',
 					success: false,
 				}),
 			);
 			return;
 		}
 
-		dispatch(
-			logaUsuario({
-				id: loginEmail,
-				changes: { isLogged: true },
-			}),
-		);
-
-		navigate('/postiti');
+		dispatch(loginUsuario(login));
 	};
 
 	return (
@@ -67,7 +61,11 @@ export const FormLogin: React.FC = () => {
 							id="email"
 							name="email"
 							error={isError}
-							helperText="Insira um email cadastrado"
+							helperText={
+								isError ? 'Insira um email cadastrado' : ''
+							}
+							onChange={(ev) => setEmail(ev.currentTarget.value)}
+							value={email}
 						/>
 					</Grid>
 					<Grid item>
@@ -80,7 +78,9 @@ export const FormLogin: React.FC = () => {
 							name="senha"
 							label={'Senha'}
 							error={isError}
-							helperText={'Insira sua senha'}
+							helperText={isError ? 'Insira sua senha' : ''}
+							onChange={(ev) => setSenha(ev.currentTarget.value)}
+							value={senha}
 						/>
 					</Grid>
 					<Grid item>
@@ -90,6 +90,7 @@ export const FormLogin: React.FC = () => {
 									type="submit"
 									fullWidth
 									variant="contained"
+									disabled={usuarioState.loading}
 								>
 									Entrar
 								</Button>

@@ -9,9 +9,9 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch } from '../../../../store/hooks';
 import { showNotification } from '../../../../store/modules/notificationSlice';
-import { adicionarUsuario } from '../../../../store/modules/Usuario/usuariosSlice';
+import { cadastrarUsuario } from '../../../../store/modules/Usuario/usuarioSlice';
 import { emailRegex } from '../../../../utils/validations/regexEmail';
 
 interface ModalFormProps {
@@ -22,9 +22,9 @@ interface ModalFormProps {
 export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 	const [email, setEmail] = useState('');
 	const [senha, setSenha] = useState('');
+	const [nome, setNome] = useState('');
 
 	const dispatch = useAppDispatch();
-	const select = useAppSelector((state) => state.usuario);
 	const testeEmail = () => emailRegex.test(email);
 
 	const fechaModal = () => {
@@ -32,25 +32,14 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 		setTimeout(() => {
 			setEmail('');
 			setSenha('');
+			setNome('');
 		}, 1000);
 	};
 
 	const handleSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		const buscaEmail = select.ids.some((id) => id === email);
-
 		if (!ev.currentTarget.checkValidity()) {
-			return;
-		}
-
-		if (buscaEmail) {
-			dispatch(
-				showNotification({
-					message: 'Email já foi cadastrado!',
-					success: false,
-				}),
-			);
 			return;
 		}
 
@@ -74,22 +63,15 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 			return;
 		}
 
-		dispatch(
-			adicionarUsuario({
-				email: email,
-				senha: senha,
-				isLogged: false,
-			}),
-		);
+		const novoUsuario = {
+			nome: nome,
+			email: email,
+			senha: senha,
+		};
+
+		dispatch(cadastrarUsuario(novoUsuario));
 
 		fechaModal();
-
-		dispatch(
-			showNotification({
-				message: 'Conta criada com sucesso!',
-				success: true,
-			}),
-		);
 	};
 
 	return (
@@ -97,6 +79,23 @@ export const ModalForm: React.FC<ModalFormProps> = ({ open, setOpen }) => {
 			<Box component={'form'} onSubmit={handleSubmit}>
 				<DialogTitle>Criar Conta</DialogTitle>
 				<DialogContent>
+					<TextField
+						autoFocus
+						aria-required
+						margin="dense"
+						name="nome"
+						id="nome"
+						label="Nome de Usuário"
+						type="text"
+						fullWidth
+						variant="filled"
+						onChange={(ev) => setNome(ev.currentTarget.value)}
+						value={nome}
+						error={nome.length <= 0 ? true : false}
+						helperText={
+							nome.length <= 0 && 'Insira um nome válido!'
+						}
+					/>
 					<TextField
 						autoFocus
 						aria-required

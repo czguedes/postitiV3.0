@@ -1,7 +1,10 @@
-interface UsuarioState {
+export interface UsuarioState {
 	email: string;
 	senha: string;
-	isLogged: boolean;
+	nome: string;
 }
 
-export default UsuarioState;
+export type UsuarioLogin = {
+	email: string;
+	senha: string;
+};
