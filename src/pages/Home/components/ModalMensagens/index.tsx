@@ -13,7 +13,12 @@ import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { escondeModal } from '../../../../store/modules/ContextoModal/contextoSlice';
 import { apagaId } from '../../../../store/modules/ModalMensagens';
-import { criarRecado } from '../../../../store/modules/Recados/recadosSlice';
+import {
+	atualizarRecado,
+	criarRecado,
+	deletarRecado,
+	refresh,
+} from '../../../../store/modules/Recados/recadosSlice';
 
 export const ModalMensagens: React.FC = () => {
 	const [titulo, setTitulo] = useState('');
@@ -55,14 +60,25 @@ export const ModalMensagens: React.FC = () => {
 					}),
 				);
 				fechaModal();
+				setRecado('');
+				setTitulo('');
 				break;
 			case 'editar':
 				//lógica para editar
 				if (recadoSelecionado.idRecado) {
-					dispatch();
+					dispatch(
+						atualizarRecado({
+							criadoPor: usuarioLogado.usuario.id,
+							recado: recado,
+							titulo: titulo,
+							id: recadoSelecionado.idRecado,
+							arquivado: recadoSelecionado.arquivado,
+						}),
+					);
 				}
 				setRecado('');
 				setTitulo('');
+
 				dispatch(apagaId());
 				fechaModal();
 
@@ -70,10 +86,11 @@ export const ModalMensagens: React.FC = () => {
 			case 'excluir':
 				//lógica de exclusão
 				if (recadoSelecionado.idRecado) {
-					dispatch();
+					dispatch(deletarRecado(recadoSelecionado.idRecado));
 				}
 				dispatch(apagaId());
 				fechaModal();
+				dispatch(refresh);
 				break;
 		}
 	};

@@ -13,9 +13,13 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-import { useAppDispatch } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { mostraModal } from '../../../../store/modules/ContextoModal/contextoSlice';
 import { capturaId } from '../../../../store/modules/ModalMensagens';
+import {
+	atualizarRecado,
+	refresh,
+} from '../../../../store/modules/Recados/recadosSlice';
 
 interface PostitiCardsProps {
 	titulo: string;
@@ -33,6 +37,28 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 	arquivado,
 }) => {
 	const dispatch = useAppDispatch();
+	const usuarioLogado = useAppSelector((s) => s.usuario);
+
+	function mudarArquivado() {
+		dispatch(
+			capturaId({
+				idRecado: id,
+				recado: recado,
+				tituloRecado: titulo,
+				arquivado: arquivado,
+			}),
+		);
+		dispatch(
+			atualizarRecado({
+				criadoPor: usuarioLogado.usuario.id,
+				recado: recado,
+				titulo: titulo,
+				arquivado: !arquivado,
+				id: id,
+			}),
+		);
+		dispatch(refresh);
+	}
 
 	const showModal = (tipo: string) => {
 		switch (tipo) {
@@ -43,8 +69,10 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 						idRecado: id,
 						recado: recado,
 						tituloRecado: titulo,
+						arquivado: arquivado,
 					}),
 				);
+
 				break;
 			case 'excluir':
 				dispatch(mostraModal('excluir'));
@@ -53,11 +81,9 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 						idRecado: id,
 						recado: recado,
 						tituloRecado: titulo,
+						arquivado: arquivado,
 					}),
 				);
-				break;
-			case 'arquivar':
-			//lógica p mudar estado do recado
 		}
 	};
 
@@ -77,7 +103,7 @@ export const PostitiCards: React.FC<PostitiCardsProps> = ({
 						<IconButton onClick={() => showModal('excluir')}>
 							<DeleteIcon />
 						</IconButton>
-						<IconButton onClick={() => showModal('arquivar')}>
+						<IconButton onClick={mudarArquivado}>
 							{arquivado ? (
 								<BookmarkIcon />
 							) : (

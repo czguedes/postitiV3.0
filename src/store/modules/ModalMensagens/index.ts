@@ -4,12 +4,14 @@ interface ModalMensagensProps {
 	idRecado: string | undefined;
 	tituloRecado: string | undefined;
 	recado: string | undefined;
+	arquivado: boolean;
 }
 
 const initialState: ModalMensagensProps = {
 	idRecado: '',
 	recado: '',
 	tituloRecado: '',
+	arquivado: false,
 };
 
 export const idRecadoSlice = createSlice({
@@ -21,6 +23,7 @@ export const idRecadoSlice = createSlice({
 				idRecado: action.payload.idRecado ?? '',
 				recado: action.payload.recado ?? '',
 				tituloRecado: action.payload.tituloRecado ?? '',
+				arquivado: action.payload.arquivado,
 			};
 		},
 		apagaId: (state) => {

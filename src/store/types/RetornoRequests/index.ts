@@ -10,5 +10,5 @@ export type RespostaCadastro = {
 export type RespostaRecado = {
 	sucesso: boolean;
 	mensagem: string;
-	dadoCadastrado?: RecadoState;
+	dadoCadastrado?: RecadoState[];
 };

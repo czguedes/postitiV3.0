@@ -7,7 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { mostraModal } from '../../store/modules/ContextoModal/contextoSlice';
 import { showNotification } from '../../store/modules/notificationSlice';
-import { listaTodosRecados } from '../../store/modules/Recados/recadosSlice';
+import {
+	listarRecados,
+	listaTodosRecados,
+	refresh,
+} from '../../store/modules/Recados/recadosSlice';
 import {
 	logoutUser,
 	setUser,
@@ -16,6 +20,7 @@ import {
 import { Loading } from '../../utils/shared/Loading';
 import { SnackBarComp } from '../../utils/shared/Snackbar';
 import { PostitiAppbar } from './components/AppBar';
+import { AppVazio } from './components/AppVazio';
 import { PostitiCards } from './components/Cards';
 import { ModalMensagens } from './components/ModalMensagens';
 
@@ -48,7 +53,13 @@ export const Home: React.FC = () => {
 		dispatch(setUser(userLogged));
 
 		//lógica de montar o site
-	}, [dispatch, navigate]);
+		dispatch(
+			listarRecados({
+				id: selectUser.usuario.id,
+				arquivado: mostraArquivados,
+			}),
+		);
+	}, [dispatch, mostraArquivados, navigate, selectUser.usuario.id]);
 
 	return (
 		<>
@@ -56,48 +67,74 @@ export const Home: React.FC = () => {
 				display={'flex'}
 				flexDirection={'column'}
 				width={'100%'}
-				position={'fixed'}
 				top={0}
 			>
 				<PostitiAppbar />
 
-				<Container sx={{ marginTop: '64px' }} component={'main'} fixed>
-					<Typography variant="h6" color={'primary'} paddingY={'8px'}>
+				<Container
+					sx={{ position: 'fixed', top: '56px', bgcolor: 'skyblue' }}
+				>
+					<Typography
+						variant="h6"
+						color={'primary'}
+						paddingY={'8px'}
+						marginTop={'8px'}
+					>
 						{mostraArquivados ? 'Arquivados' : 'Seus recados'}
 					</Typography>
 
 					<Divider />
+				</Container>
 
+				<Container
+					sx={{
+						marginTop: '113px',
+						paddingBottom: '24px',
+					}}
+					component={'main'}
+					fixed
+				>
 					<Grid container spacing={2}>
-						<Grid item>
-							{selectRecados.length === 0
-								? 'Nada aqui!'
-								: selectRecados
-										.filter(
-											(item) =>
-												item.criadoPor ===
-												selectUser.usuario.id,
-										)
-										.map(
-											({
-												criadoEm,
-												recado,
-												titulo,
-												id,
-												arquivado,
-											}) => (
-												<PostitiCards
-													data={criadoEm}
-													recado={recado}
-													titulo={titulo}
-													key={id}
-													id={id}
-													arquivado={arquivado}
-												/>
-											),
-										)}
-						</Grid>
+						{selectRecados.length === 0 || !selectRecados ? (
+							<AppVazio />
+						) : (
+							selectRecados
+								.filter(
+									(item) =>
+										item.arquivado === mostraArquivados &&
+										item.criadoPor ===
+											selectUser.usuario.id,
+								)
+								.map(
+									({
+										criadoEm,
+										recado,
+										titulo,
+										id,
+										arquivado,
+									}) => (
+										<PostitiCards
+											data={criadoEm}
+											recado={recado}
+											titulo={titulo}
+											key={id}
+											id={id}
+											arquivado={arquivado}
+										/>
+									),
+								)
+						)}
 					</Grid>
+				</Container>
+				<Container
+					sx={{
+						position: 'fixed',
+						bottom: 0,
+						paddingBottom: '16px',
+						bgcolor: 'skyblue',
+					}}
+				>
+					<Divider />
 				</Container>
 			</Box>
 			<Box
@@ -125,6 +162,13 @@ export const Home: React.FC = () => {
 					aria-label="archive"
 					onClick={() => {
 						setMostraArquivados(!mostraArquivados);
+						dispatch(
+							listarRecados({
+								id: selectUser.usuario.id,
+								arquivado: mostraArquivados,
+							}),
+						);
+						dispatch(refresh);
 					}}
 				>
 					<InboxIcon />

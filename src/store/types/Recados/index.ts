@@ -11,4 +11,11 @@ export type RecadoDTO = {
 	titulo: string;
 	recado: string;
 	criadoPor: string;
+	arquivado?: boolean;
+	id?: string;
+};
+
+export type PesquisaRecado = {
+	id: string;
+	arquivado: boolean;
 };
