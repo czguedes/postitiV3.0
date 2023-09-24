@@ -86,7 +86,12 @@ export const ModalMensagens: React.FC = () => {
 			case 'excluir':
 				//lógica de exclusão
 				if (recadoSelecionado.idRecado) {
-					dispatch(deletarRecado(recadoSelecionado.idRecado));
+					dispatch(
+						deletarRecado({
+							idRecado: recadoSelecionado.idRecado,
+							idUsuario: usuarioLogado.usuario.id,
+						}),
+					);
 				}
 				dispatch(apagaId());
 				fechaModal();

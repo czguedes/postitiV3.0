@@ -19,3 +19,8 @@ export type PesquisaRecado = {
 	id: string;
 	arquivado: boolean;
 };
+
+export type DeleteRecado = {
+	idRecado: string;
+	idUsuario: string;
+};

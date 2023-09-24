@@ -7,7 +7,12 @@ import { AxiosError } from 'axios';
 
 import { RootState } from '../..';
 import serviceAPI from '../../../configs/services/service.api';
-import { PesquisaRecado, RecadoDTO, RecadoState } from '../../types/Recados';
+import {
+	DeleteRecado,
+	PesquisaRecado,
+	RecadoDTO,
+	RecadoState,
+} from '../../types/Recados';
 import { RespostaRecado } from '../../types/RetornoRequests';
 import { showNotification } from '../notificationSlice';
 
@@ -89,9 +94,12 @@ export const atualizarRecado = createAsyncThunk(
 
 export const deletarRecado = createAsyncThunk(
 	'recados/excluir',
-	async (id: string, { dispatch }) => {
+	async (dados: DeleteRecado, { dispatch }) => {
 		try {
-			const retorno = await serviceAPI.delete(`/recados/${id}`);
+			const retorno = await serviceAPI.delete(
+				`/recados/${dados.idRecado}`,
+				dados.idUsuario,
+			);
 			dispatch(
 				showNotification({
 					message: retorno.data.mensagem,
