@@ -98,7 +98,7 @@ export const deletarRecado = createAsyncThunk(
 		try {
 			const retorno = await serviceAPI.delete(
 				`/recados/${dados.idRecado}`,
-				dados.idUsuario,
+				{ data: { idUsuario: dados.idUsuario } },
 			);
 			dispatch(
 				showNotification({
